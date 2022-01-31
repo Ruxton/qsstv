@@ -894,6 +894,11 @@ void imageViewer::setAspectMode(Qt::AspectRatioMode mode)
   aspectRatioMode = mode;
 }
 
+void imageViewer::setImageAlignment(int align)
+{
+  imageAlignment = align;
+}
+
 int imageViewer::applyTemplate()
 {
   //  qDebug() << "applyTemplate";
@@ -963,10 +968,44 @@ int imageViewer::applyTemplate()
                                               Qt::SmoothTransformation
                                               )
                                       );
+          int locX = (scaledImage.width()-tWidth)/2;
+          int locY = (scaledImage.height()-tHeight)/2;
+          switch (imageAlignment) {
+          case 0:
+              locX = 0;
+              locY = 0;
+              break;
+          case 2:
+              locX = (scaledImage.width()-tWidth);
+          case 1:
+              locY = 0;
+              break;
+          case 3:
+              locX = 0;
+              break;
+          case 5:
+              locX = (scaledImage.width()-tWidth);
+              break;
+          case 6:
+              locX = 0;
+              locY = (scaledImage.height()-tHeight);
+              break;
+          case 8:
+              locX = (scaledImage.width()-tWidth);
+          case 7:
+              locY = (scaledImage.height()-tHeight);
+              break;
+          default:
+              break;
+          }
+
+          addToLog(QString("Location, locX=%1,locY=%2").arg(locX).arg(locY), LOGIMAG);
+
+
           // Crop to intended dimensions at the centre of the image
           displayedImage = QImage(scaledImage
-                                  .copy((scaledImage.width()-tWidth)/2,
-                                        (scaledImage.height()-tHeight)/2,
+                                  .copy(locX,
+                                        locY,
                                         tWidth,
                                         tHeight
                                         )
@@ -1019,9 +1058,40 @@ int imageViewer::applyTemplate()
                                                   )
                                           );
               scaledImage=scaledImage.convertToFormat(QImage::Format_ARGB32);
+              int locX = (scaledImage.width()-tWidth)/2;
+              int locY = (scaledImage.height()-tHeight)/2;
+              switch (imageAlignment) {
+              case 0:
+                  locX = 0;
+                  locY = 0;
+                  break;
+              case 2:
+                  locX = (scaledImage.width()-tWidth);
+              case 1:
+                  locY = 0;
+                  break;
+              case 3:
+                  locX = 0;
+                  break;
+              case 5:
+                  locX = (scaledImage.width()-tWidth);
+                  break;
+              case 6:
+                  locX = 0;
+                  locY = (scaledImage.height()-tHeight);
+                  break;
+              case 8:
+                  locX = (scaledImage.width()-tWidth);
+              case 7:
+                  locY = (scaledImage.height()-tHeight);
+                  break;
+              default:
+                  break;
+              }
+              addToLog(QString("Location, locX=%1,locY=%2").arg(locX).arg(locY), LOGIMAG);
               overlayedImage= QImage(scaledImage
-                                     .copy((scaledImage.width()-tWidth)/2,
-                                           (scaledImage.height()-tHeight)/2,
+                                     .copy(locX,
+                                           locY/2,
                                            tWidth,
                                            tHeight
                                            )

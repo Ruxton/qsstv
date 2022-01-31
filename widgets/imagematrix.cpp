@@ -122,12 +122,30 @@ void imageMatrix::init(int numRows, int numColumns, QString dir,imageViewer::thu
 
 void imageMatrix::getList()
 {
+  QFileInfoList fileList;
+  QDateTime listFileTime;
 
+  QDirIterator it(dirPath, QDir::NoFilter | QDir::Files | QDir::NoSymLinks,QDirIterator::Subdirectories);
+  while (it.hasNext()) {
+      QFileInfo f(it.next());
+      if(fileList.isEmpty())
+      {
+          fileList << f;
+          listFileTime = f.fileTime(QFile::FileBirthTime);
+      } else {
+        if(f.fileTime(QFile::FileBirthTime) >= listFileTime) {
+            fileList.prepend(f);
+        } else {
+            fileList.append(f);
+        }
+        listFileTime = f.fileTime(QFile::FileBirthTime);
+      }
+  }
 
-  QDir dir(dirPath);
-  dir.setFilter(QDir::Files | QDir::NoSymLinks);
-  dir.setSorting(sortFlags);
-  fileList = dir.entryInfoList();
+//  QDir dir(dirPath);
+//  dir.setFilter(QDir::Files | QDir::NoSymLinks);
+//  dir.setSorting(sortFlags);
+//  fileList = dir.entryInfoList();
   numPages=ceil((double)fileList.count()/(double)(rows*columns));
   if(numPages==0) numPages=1;
   slotBegin();

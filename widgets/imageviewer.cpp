@@ -1,4 +1,4 @@
-/***************************************************************************
+﻿/***************************************************************************
  *   Copyright (C) 2000-2019 by Johan Maes                                 *
  *   on4qz@telenet.be                                                      *
  *   http://users.telenet.be/on4qz                                         *
@@ -148,17 +148,23 @@ bool imageViewer::openImage(QString &filename,QString start,bool ask,bool showMe
 
   if(fromCache)
     {
+      cachePath=finf.absolutePath()+"/cache/";
+      QDir dd(cachePath);
+      if(!dd.exists())
+        {
+          dd.mkpath(cachePath);
+        }
 #if (QT_VERSION < QT_VERSION_CHECK(5,10,0))
-      cacheFileName=finf.absolutePath()+"/cache/"+finf.baseName()+finf.created().toString()+".png";
+      cacheFileName=cachePath+finf.baseName()+finf.created().toString()+".png";
 #else
-      cacheFileName=finf.absolutePath()+"/cache/"+finf.baseName()+finf.birthTime().toString()+".png";
+      cacheFileName=cachePath+finf.baseName()+finf.birthTime().toString()+".png";
 #endif
       if(tempImage.load(cacheFileName))
         {
           cacheHit=true;
           success=true;
           orgWidth=tempImage.text("orgWidth").toInt();
-          orgHeight=tempImage.text("orgHeight").toInt();
+          orgHeight=tempImage.text("orgHeightcacheFileName").toInt();
         }
       else
         {
@@ -176,7 +182,7 @@ bool imageViewer::openImage(QString &filename,QString start,bool ask,bool showMe
               jp2Ptr=new jp2IO;
               jp2Ptr->setParams(&tempImage,tempFilename,fromCache);
               jp2Ptr->moveToThread(threadIm);
-              connect(threadIm, SIGNAL(started()), jp2Ptr, SLOT(slotStart()));
+              connect(threadIm, SIGNAL(startecacheFileNamed()), jp2Ptr, SLOT(slotStart()));
               connect(jp2Ptr, SIGNAL(done(bool,bool)), this,   SLOT(slotJp2ImageDone(bool,bool)));
               connect( threadIm, SIGNAL(finished()), jp2Ptr, SLOT(deleteLater()));
               connect( threadIm, SIGNAL(finished()), threadIm, SLOT(deleteLater()));
@@ -1058,6 +1064,7 @@ int imageViewer::applyTemplate()
                                                   )
                                           );
               scaledImage=scaledImage.convertToFormat(QImage::Format_ARGB32);
+
               int locX = (scaledImage.width()-tWidth)/2;
               int locY = (scaledImage.height()-tHeight)/2;
               switch (imageAlignment) {
@@ -1089,9 +1096,10 @@ int imageViewer::applyTemplate()
                   break;
               }
               addToLog(QString("Location, locX=%1,locY=%2").arg(locX).arg(locY), LOGIMAG);
+
               overlayedImage= QImage(scaledImage
                                      .copy(locX,
-                                           locY/2,
+                                           locY,
                                            tWidth,
                                            tHeight
                                            )

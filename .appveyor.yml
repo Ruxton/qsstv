@@ -8,47 +8,47 @@ build_script:
 
 for:
   - matrix: { only: [appveyor_build_wokrer_image &linux Ubuntu] }
-  install: |-
-    set -e
-    sudo sed -i '/arch=/! s/^deb/deb [arch=amd64,i386]/' /etc/apt/sources.list
-    awk '
-    $3 !~ /ubuntu\.com/ { next }
-    $1 == "deb" {
-      $2 = "[arch=armhf,arm64]";
-      $3 = "http://ports.ubuntu.com/ubuntu-ports/"
-    } 1' /etc/apt/sources.list | sudo tee /etc/apt/sources.list.d/ports.list > /dev/null
-    install-deps() {
-      local arch="$1"; shift
-      local native=("$@")
-      # local target=(libboost-dev)
-      sudo dpkg --add-architecture $arch
-      sudo apt-get update -qq
-      sudo apt-get install -qq aptitude > /dev/null
-      # sudo aptitude install -yR ${native[@]} ${target[@]/%/:$arch} > /dev/null
-      sudo aptitude install -yR ${native[@]} > /dev/null
-    }
-    sudo update-alternatives --set gcc /usr/bin/gcc-7
-    case $ARCH in
-    x86_64)
-      install-deps amd64 pkg-config g++ libfftw3-dev qt5-default libpulse-dev libasound2-dev libv4l-dev libopenjp2-7-dev libhamlib++-dev
-      ;;
-    i686)
-      install-deps i386 g++-multilib libfftw3-dev qt5-default libpulse-dev libasound2-dev libv4l-dev libopenjp2-7-dev libhamlib++-dev
-      export CFLAGS -m32
-      export CXXFLAGS -m32
-      export CC=i386-linux-gnu-gcc
-      export CXX=i386-linux-gnu-g++
-      ;;
-    armv7l)
-      install-deps armhf g++-arm-linux-gnueabihf libfftw3-dev qt5-default libpulse-dev libhamlib-dev libasound2-dev libv4l-dev libopenjp2-7-dev
-      export CC=arm-linux-gnueabihf-gcc
-      export CXX=arm-linux-gnueabihf-g++
-      ;;
-    aarch64)
-      install-deps arm64 g++-aarch64-linux-gnu libfftw3-dev qt5-default libpulse-dev libhamlib-dev libasound2-dev libv4l-dev libopenjp2-7-dev
-      export CC=aarch64-linux-gnu-gcc
-      export CXX=aarch64-linux-gnu-g++
-      ;;
-    esac
-  artifacts:
-    - path: qsstv
+    install: |-
+      set -e
+      sudo sed -i '/arch=/! s/^deb/deb [arch=amd64,i386]/' /etc/apt/sources.list
+      awk '
+      $3 !~ /ubuntu\.com/ { next }
+      $1 == "deb" {
+        $2 = "[arch=armhf,arm64]";
+        $3 = "http://ports.ubuntu.com/ubuntu-ports/"
+      } 1' /etc/apt/sources.list | sudo tee /etc/apt/sources.list.d/ports.list > /dev/null
+      install-deps() {
+        local arch="$1"; shift
+        local native=("$@")
+        # local target=(libboost-dev)
+        sudo dpkg --add-architecture $arch
+        sudo apt-get update -qq
+        sudo apt-get install -qq aptitude > /dev/null
+        # sudo aptitude install -yR ${native[@]} ${target[@]/%/:$arch} > /dev/null
+        sudo aptitude install -yR ${native[@]} > /dev/null
+      }
+      sudo update-alternatives --set gcc /usr/bin/gcc-7
+      case $ARCH in
+      x86_64)
+        install-deps amd64 pkg-config g++ libfftw3-dev qt5-default libpulse-dev libasound2-dev libv4l-dev libopenjp2-7-dev libhamlib++-dev
+        ;;
+      i686)
+        install-deps i386 g++-multilib libfftw3-dev qt5-default libpulse-dev libasound2-dev libv4l-dev libopenjp2-7-dev libhamlib++-dev
+        export CFLAGS -m32
+        export CXXFLAGS -m32
+        export CC=i386-linux-gnu-gcc
+        export CXX=i386-linux-gnu-g++
+        ;;
+      armv7l)
+        install-deps armhf g++-arm-linux-gnueabihf libfftw3-dev qt5-default libpulse-dev libhamlib-dev libasound2-dev libv4l-dev libopenjp2-7-dev
+        export CC=arm-linux-gnueabihf-gcc
+        export CXX=arm-linux-gnueabihf-g++
+        ;;
+      aarch64)
+        install-deps arm64 g++-aarch64-linux-gnu libfftw3-dev qt5-default libpulse-dev libhamlib-dev libasound2-dev libv4l-dev libopenjp2-7-dev
+        export CC=aarch64-linux-gnu-gcc
+        export CXX=aarch64-linux-gnu-g++
+        ;;
+      esac
+    artifacts:
+      - path: qsstv

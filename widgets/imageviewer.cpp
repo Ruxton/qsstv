@@ -164,7 +164,7 @@ bool imageViewer::openImage(QString &filename,QString start,bool ask,bool showMe
           cacheHit=true;
           success=true;
           orgWidth=tempImage.text("orgWidth").toInt();
-          orgHeight=tempImage.text("orgHeightcacheFileName").toInt();
+          orgHeight=tempImage.text("orgHeight").toInt();
         }
       else
         {
@@ -182,7 +182,7 @@ bool imageViewer::openImage(QString &filename,QString start,bool ask,bool showMe
               jp2Ptr=new jp2IO;
               jp2Ptr->setParams(&tempImage,tempFilename,fromCache);
               jp2Ptr->moveToThread(threadIm);
-              connect(threadIm, SIGNAL(startecacheFileNamed()), jp2Ptr, SLOT(slotStart()));
+              connect(threadIm, SIGNAL(started()), jp2Ptr, SLOT(slotStart()));
               connect(jp2Ptr, SIGNAL(done(bool,bool)), this,   SLOT(slotJp2ImageDone(bool,bool)));
               connect( threadIm, SIGNAL(finished()), jp2Ptr, SLOT(deleteLater()));
               connect( threadIm, SIGNAL(finished()), threadIm, SLOT(deleteLater()));

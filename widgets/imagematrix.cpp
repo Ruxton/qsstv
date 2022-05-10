@@ -132,14 +132,14 @@ void imageMatrix::getList()
         if(fileList.isEmpty())
         {
           fileList.append(f);
-          listFileTime = f.fileTime(QFile::FileBirthTime);
+          listFileTime = f.lastModified();
         } else {
-          if(f.fileTime(QFile::FileBirthTime) >= listFileTime) {
+          if(f.lastModified() >= listFileTime) {
               fileList.prepend(f);
           } else {
               fileList.append(f);
           }
-          listFileTime = f.fileTime(QFile::FileBirthTime);
+          listFileTime = f.lastModified();
         }
       }
   }

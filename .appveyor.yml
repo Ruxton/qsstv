@@ -3,8 +3,9 @@ version: "{build}-{branch}"
 before_build:
   - git submodule update --init --recursive --depth 1
 build_script:
+  - qmake --version
   - qmake
-  - make
+  - make -j4
 
 for:
   - matrix: { only: [appveyor_build_worker_image: &linux Ubuntu] }
@@ -34,8 +35,8 @@ for:
         ;;
       i686)
         install-deps i386 g++-multilib libfftw3-dev qt5-default libpulse-dev libasound2-dev libv4l-dev libopenjp2-7-dev libhamlib++-dev
-        export CFLAGS -m32
-        export CXXFLAGS -m32
+        export CFLAGS=-m32
+        export CXXFLAGS=-m32
         export CC=i386-linux-gnu-gcc
         export CXX=i386-linux-gnu-g++
         ;;

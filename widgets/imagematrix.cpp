@@ -119,31 +119,27 @@ void imageMatrix::init(int numRows, int numColumns, QString dir,imageViewer::thu
 //  displayFiles();
 }
 
+bool compareFile(QFileInfo f1, QFileInfo f2) {
+    return f1.lastModified() > f2.lastModified();
+}
 
 void imageMatrix::getList()
 {
   QDateTime listFileTime;
+
+  if(!fileList.isEmpty()) {
+      fileList.erase(fileList.begin(), fileList.end());
+  }
 
   QDirIterator it(dirPath, QDir::Files | QDir::NoSymLinks,QDirIterator::Subdirectories);
   while (it.hasNext()) {
       it.next();
       QFileInfo f(it.fileInfo());
       if(!f.canonicalPath().endsWith("cache")) {
-        if(fileList.isEmpty())
-        {
-          fileList.append(f);
-          listFileTime = f.fileTime(QFile::FileBirthTime);
-        } else {
-          if(f.fileTime(QFile::FileBirthTime) >= listFileTime) {
-              fileList.prepend(f);
-          } else {
-              fileList.append(f);
-          }
-          listFileTime = f.fileTime(QFile::FileBirthTime);
-        }
+       fileList.append(f);
       }
   }
-
+  std::sort(fileList.begin(), fileList.end(), compareFile);
   numPages=ceil((double)fileList.count()/(double)(rows*columns));
   if(numPages==0) numPages=1;
   slotBegin();
